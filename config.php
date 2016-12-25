@@ -142,33 +142,35 @@ if ( ! class_exists( 'GADWP_Config' ) ) {
 
 		public function set_plugin_options( $network_settings = false ) {
 			// Handle Network Mode
+			if (! is_multisite() ) {
+				return;
+			}
 			$options = $this->options;
 			$get_network_options = get_site_option( 'gadash_network_options' );
 			$old_network_options = (array) json_decode( $get_network_options );
-			if ( is_multisite() ) {
-				if ( $network_settings ) { // Retrieve network options, clear blog options, store both to db
-					$network_options['ga_dash_token'] = $this->options['ga_dash_token'];
-					$options['ga_dash_token'] = '';
-					if ( is_network_admin() ) {
-						$network_options['ga_dash_profile_list'] = $this->options['ga_dash_profile_list'];
-						$options['ga_dash_profile_list'] = array();
-						$network_options['ga_dash_clientid'] = $this->options['ga_dash_clientid'];
-						$options['ga_dash_clientid'] = '';
-						$network_options['ga_dash_clientsecret'] = $this->options['ga_dash_clientsecret'];
-						$options['ga_dash_clientsecret'] = '';
-						$network_options['ga_dash_userapi'] = $this->options['ga_dash_userapi'];
-						$options['ga_dash_userapi'] = 0;
-						$network_options['ga_dash_network'] = $this->options['ga_dash_network'];
-						$network_options['ga_dash_excludesa'] = $this->options['ga_dash_excludesa'];
-						$network_options['automatic_updates_minorversion'] = $this->options['automatic_updates_minorversion'];
-						unset( $options['ga_dash_network'] );
-						if ( isset( $this->options['ga_dash_tableid_network'] ) ) {
-							$network_options['ga_dash_tableid_network'] = $this->options['ga_dash_tableid_network'];
-							unset( $options['ga_dash_tableid_network'] );
-						}
+			
+			if ( $network_settings ) { // Retrieve network options, clear blog options, store both to db
+				$network_options['ga_dash_token'] = $this->options['ga_dash_token'];
+				$options['ga_dash_token'] = '';
+				if ( is_network_admin() ) {
+					$network_options['ga_dash_profile_list'] = $this->options['ga_dash_profile_list'];
+					$options['ga_dash_profile_list'] = array();
+					$network_options['ga_dash_clientid'] = $this->options['ga_dash_clientid'];
+					$options['ga_dash_clientid'] = '';
+					$network_options['ga_dash_clientsecret'] = $this->options['ga_dash_clientsecret'];
+					$options['ga_dash_clientsecret'] = '';
+					$network_options['ga_dash_userapi'] = $this->options['ga_dash_userapi'];
+					$options['ga_dash_userapi'] = 0;
+					$network_options['ga_dash_network'] = $this->options['ga_dash_network'];
+					$network_options['ga_dash_excludesa'] = $this->options['ga_dash_excludesa'];
+					$network_options['automatic_updates_minorversion'] = $this->options['automatic_updates_minorversion'];
+					unset( $options['ga_dash_network'] );
+					if ( isset( $this->options['ga_dash_tableid_network'] ) ) {
+						$network_options['ga_dash_tableid_network'] = $this->options['ga_dash_tableid_network'];
+						unset( $options['ga_dash_tableid_network'] );
 					}
-					update_site_option( 'gadash_network_options', json_encode( $this->validate_data( array_merge( $old_network_options, $network_options ) ) ) );
 				}
+				update_site_option( 'gadash_network_options', json_encode( $this->validate_data( array_merge( $old_network_options, $network_options ) ) ) );
 			}
 			update_option( 'gadash_options', json_encode( $this->validate_data( $options ) ) );
 		}
